@@ -78,7 +78,11 @@ MONGO_HOST=your_cluster_hostname.mongodb.net
 MONGO_DB=myvectordb
 MONGO_COLLECTION=vectorized_data
 ```
-### 4. Chuẩn bị dữ liệu và Tải lên Atlas
+### 4. tạo foder data đưa file json vào và đặt tên như cấu trúc `data/products_data.json`
+```bash
+mkdir data
+```
+### 5. Chuẩn bị dữ liệu và Tải lên Atlas
 
 Chạy kịch bản `load_data.py` để tạo vector embeddings cho các bài báo và lưu chúng vào MongoDB Atlas.
 
@@ -87,7 +91,7 @@ python load_data.py
 ```
 Quá trình này có thể mất vài phút, tùy thuộc vào tốc độ mạng và máy tính của bạn, vì nó cần tải mô hình embedding lần đầu và xử lý dữ liệu.
 
-### 5. Tạo Vector Search Index
+### 6. Tạo Vector Search Index
 
 Đây là bước quan trọng để kích hoạt tìm kiếm ngữ nghĩa. Bạn cần thực hiện trên giao diện web của MongoDB Atlas.
 
@@ -115,7 +119,7 @@ Quá trình này có thể mất vài phút, tùy thuộc vào tốc độ mạn
 
 6.  Tạo index và chờ cho đến khi trạng thái chuyển thành **Active**.
 
-### 6. Chạy API Server
+### 7. Chạy API Server
 
 Bây giờ bạn đã sẵn sàng để khởi động dịch vụ API.
 
