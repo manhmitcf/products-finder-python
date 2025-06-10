@@ -1,0 +1,5 @@
+pymongo[srv]
+sentence-transformers
+fastapi
+uvicorn
+python-dotenv
