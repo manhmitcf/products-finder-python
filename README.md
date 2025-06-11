@@ -78,7 +78,7 @@ MONGO_HOST=your_cluster_hostname.mongodb.net
 MONGO_DB=myvectordb
 MONGO_COLLECTION=vectorized_data
 ```
-### 4. tạo foder data đưa file json vào và đặt tên như cấu trúc `data/products_data.json`
+### 4. Tạo foder data đưa file json vào và đặt tên như cấu trúc `data/products_data.json`
 ```bash
 mkdir data
 ```
@@ -139,3 +139,49 @@ curl -X POST http://localhost:8000/search \
 ```
 
 Bạn cũng có thể truy cập `http://localhost:8000/docs` trong trình duyệt để xem giao diện tài liệu API tương tác của FastAPI (Swagger UI).
+
+## Giao diện người dùng với Streamlit
+
+Dự án đã được tích hợp giao diện người dùng thân thiện bằng Streamlit để dễ dàng sử dụng mà không cần gọi API trực tiếp.
+
+### Chạy với Python
+
+#### 1. Chạy cả API và UI cùng lúc
+
+**Trên Windows:**
+```bash
+.\run_app.bat
+```
+
+**Trên Linux/Mac:**
+```bash
+chmod +x run_app.sh
+./run_app.sh
+```
+
+#### 2. Hoặc chạy riêng từng service
+
+```bash
+# Terminal 1: Chạy API
+uvicorn main:app --reload
+
+# Terminal 2: Chạy Streamlit UI
+streamlit run streamlit_app.py
+```
+
+### Truy cập ứng dụng
+
+- **Streamlit UI:** http://localhost:8501 (Giao diện chính)
+- **FastAPI:** http://localhost:8000 (API Backend)
+- **API Docs:** http://localhost:8000/docs (Tài liệu API)
+
+### Tính năng Streamlit UI
+
+- ✅ **Giao diện thân thiện** - Dễ sử dụng cho người không kỹ thuật
+- ✅ **Tìm kiếm thông minh** - Nhập từ khóa và nhận kết quả ngay lập tức
+- ✅ **Hiển thị đa dạng** - Danh sách, bảng dữ liệu, và biểu đồ phân tích
+- ✅ **Lịch sử tìm kiếm** - Lưu và tái sử dụng các truy vấn trước
+- ✅ **Ví dụ tìm kiếm** - Gợi ý từ khóa phổ biến
+- ✅ **Kiểm tra kết nối** - Theo dõi trạng thái API
+- ✅ **Xuất dữ liệu** - Tải kết quả dưới dạng CSV
+- ✅ **Responsive design** - Tương thích mọi thiết bị

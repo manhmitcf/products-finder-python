@@ -18,7 +18,7 @@ uri = f"mongodb+srv://{MONGO_USER}:{MONGO_PASS}@{MONGO_HOST}/?retryWrites=true&w
 
 # 2. Tải mô hình embedding
 print("Loading sentence-transformer model...")
-model = SentenceTransformer("bkai-foundation-models/vietnamese-bi-encoder")
+model = SentenceTransformer("keepitreal/vietnamese-sbert")
 print("Model loaded.")
 
 client = None
@@ -40,7 +40,6 @@ try:
 
     # 5. Xử lý và tải từng bài báo lên
     print(f"Processing and uploading {len(news_array)} articles...")
-    count = 0
     for i, news_item in enumerate(news_array):
         # Lấy mô tả ngắn để tạo embedding
         text_to_embed = news_item.get('descriptioninfo')
@@ -59,9 +58,6 @@ try:
         # Chèn document đã được vector hóa vào collection
         collection.insert_one(news_item)
         print(f"  ({i+1}/{len(news_array)}) Stored: '{news_item['name'][:50]}...'")
-        count += 1
-        if count == 1000:
-            break
         
     print("\nData loading and vectorization complete!")
     print(f"Total documents in collection: {collection.count_documents({})}")

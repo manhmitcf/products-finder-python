@@ -29,7 +29,7 @@ except Exception as e:
 
 # 3. Tải mô hình embedding (sẽ được cache sau lần chạy đầu)
 print("Loading sentence-transformer model...")
-model = SentenceTransformer("bkai-foundation-models/vietnamese-bi-encoder")
+model = SentenceTransformer("keepitreal/vietnamese-sbert")
 print("Model loaded.")
 
 # 4. Khởi tạo ứng dụng FastAPI

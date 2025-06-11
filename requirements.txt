@@ -3,3 +3,6 @@ sentence-transformers
 fastapi
 uvicorn
 python-dotenv
+streamlit
+requests
+pandas
