@@ -115,7 +115,7 @@ Quá trình này có thể mất vài phút, tùy thuộc vào tốc độ mạn
       }
     }
     ```
-    > **Lưu ý:** `numDimensions` là **384** vì chúng ta sử dụng mô hình `all-MiniLM-L6-v2`.
+    > **Lưu ý:** `numDimensions` là **768** vì chúng ta sử dụng mô hình `bkai-foundation-models/vietnamese-bi-encoder`.
 
 6.  Tạo index và chờ cho đến khi trạng thái chuyển thành **Active**.
 

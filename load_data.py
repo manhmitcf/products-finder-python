@@ -18,7 +18,7 @@ uri = f"mongodb+srv://{MONGO_USER}:{MONGO_PASS}@{MONGO_HOST}/?retryWrites=true&w
 
 # 2. Tải mô hình embedding
 print("Loading sentence-transformer model...")
-model = SentenceTransformer("keepitreal/vietnamese-sbert")
+model = SentenceTransformer("bkai-foundation-models/vietnamese-bi-encoder")
 print("Model loaded.")
 
 client = None
