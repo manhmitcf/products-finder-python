@@ -1,4 +1,4 @@
-pymongo[srv]
+pymongo
 sentence-transformers
 fastapi
 uvicorn
@@ -6,3 +6,4 @@ python-dotenv
 streamlit
 requests
 pandas
+torch

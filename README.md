@@ -18,6 +18,8 @@ Một ứng dụng tìm kiếm sản phẩm sử dụng công nghệ AI và Vect
 ```bash
 git clone <repository-url>
 cd products-finder-python
+python -m venv venv
+venv\Scripts\activate
 pip install -r requirements.txt
 ```
 

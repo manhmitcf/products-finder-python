@@ -6,6 +6,7 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 from text_chunker import aggregate_search_results
+import torch
 
 # --- KHỞI TẠO ---
 
@@ -23,15 +24,17 @@ try:
     client = MongoClient(uri)
     db = client[MONGO_DB]
     # Use the chunked collection
-    collection = db[f"{MONGO_COLLECTION}_chunked"]
-    print("Successfully connected to MongoDB Atlas (chunked collection).")
+    collection = db[f"{MONGO_COLLECTION}"]
+    print("Successfully connected to MongoDB Atlas (collection).")
 except Exception as e:
     print(f"Failed to connect to MongoDB: {e}")
     exit()
-
+# Setup device
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+print(f"Using device: {device}")
 # 3. Tải mô hình embedding (sẽ được cache sau lần chạy đầu)
 print("Loading sentence-transformer model...")
-model = SentenceTransformer("bkai-foundation-models/vietnamese-bi-encoder")
+model = SentenceTransformer("bkai-foundation-models/vietnamese-bi-encoder", device=device)
 print("Model loaded.")
 
 # 4. Khởi tạo ứng dụng FastAPI
@@ -63,7 +66,7 @@ async def search_products(request: SearchRequest):
 
     try:
         # a. Vector hóa câu truy vấn từ client
-        query_vector = model.encode(request.text).tolist()
+        query_vector = model.encode(request.text, batch_size=128).tolist()
 
         # b. Xây dựng aggregation pipeline cho Vector Search với chunks
         pipeline = [

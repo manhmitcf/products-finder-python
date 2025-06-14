@@ -4,7 +4,7 @@ from pymongo import MongoClient
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
 from text_chunker import process_products_with_chunking
-
+import torch
 def load_and_process_data():
     """
     Load product data, create chunks, generate embeddings, and store in MongoDB
@@ -25,15 +25,17 @@ def load_and_process_data():
         db = client[MONGO_DB]
         
         # Use a new collection for chunked data
-        collection = db[f"{MONGO_COLLECTION}_chunked"]
+        collection = db[f"{MONGO_COLLECTION}"]
         print("Successfully connected to MongoDB Atlas.")
     except Exception as e:
         print(f"Failed to connect to MongoDB: {e}")
         return
-    
+    # Setup device
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    print(f"Using device: {device}")
     # Load the sentence transformer model
     print("Loading sentence-transformer model...")
-    model = SentenceTransformer("bkai-foundation-models/vietnamese-bi-encoder")
+    model = SentenceTransformer("bkai-foundation-models/vietnamese-bi-encoder", device=device)
     print("Model loaded successfully.")
     
     # Load product data
@@ -99,7 +101,7 @@ def load_and_process_data():
 }
     """)
     print(f"4. Name the index: 'vector_search_chunked'")
-    print(f"5. Apply to collection: '{MONGO_COLLECTION}_chunked'")
+    print(f"5. Apply to collection: '{MONGO_COLLECTION}'")
     print("="*50)
 
 if __name__ == "__main__":
