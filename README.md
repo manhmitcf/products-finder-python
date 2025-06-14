@@ -1,187 +1,287 @@
+# 🔍 Products Finder - Tìm kiếm sản phẩm thông minh với AI
 
-# Product Finder Service - Dịch vụ Tìm kiếm sản phẩm Ngữ nghĩa
+Một ứng dụng tìm kiếm sản phẩm sử dụng công nghệ AI và Vector Search với khả năng Text Chunking để tăng độ chính xác tìm kiếm.
 
-Dự án này là một dịch vụ API backend được xây dựng bằng Python, FastAPI và MongoDB Atlas. Dịch vụ cho phép tìm kiếm các sản phẩm dựa trên ý nghĩa ngữ nghĩa của câu truy vấn thay vì chỉ dựa vào từ khóa. Điều này được thực hiện bằng cách sử dụng **Vector Search** của MongoDB Atlas.
+## ✨ Tính năng chính
 
-## Tính năng chính
+- 🤖 **Tìm kiếm ngữ nghĩa**: Sử dụng mô hình AI Vietnamese-BiEncoder để hiểu ý nghĩa câu truy vấn
+- 🧩 **Text Chunking**: Chia nhỏ mô tả dài thành các đoạn ngắn để tìm kiếm chính xác hơn
+- ⚡ **Vector Search**: Tìm kiếm nhanh chóng với MongoDB Atlas Vector Search
+- 🌐 **API RESTful**: FastAPI với documentation tự động
+- 📊 **Giao diện web**: Streamlit app với UI thân thiện
+- 📈 **Phân tích kết quả**: Hiển thị điểm số, chunks và thống kê
 
--   **Tìm kiếm Ngữ nghĩa (Semantic Search):** Tìm các bài báo liên quan đến một chủ đề ngay cả khi các từ khóa chính xác không xuất hiện trong văn bản.
--   **Vector Embeddings:** Sử dụng mô hình `bkai-foundation-models/vietnamese-bi-encoder` từ thư viện `sentence-transformers` để chuyển đổi nội dung văn bản thành các vector số học (embeddings).
--   **API Backend:** Xây dựng API RESTful bằng FastAPI để nhận truy vấn và trả về kết quả.
--   **Cơ sở dữ liệu Vector:** Lưu trữ và truy vấn các vector embeddings một cách hiệu quả bằng MongoDB Atlas Vector Search.
-
-## Cấu trúc dự án
+## 🏗️ Kiến trúc hệ thống
 
 ```
-news-finder-python/
-├── venv/
-├── data/
-│   └── products_data.json
-├── .env
-├── .gitignore
-├── requirements.txt
-├── load_data.py
-├── main.py
-└── README.md
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Streamlit UI  │───▶│   FastAPI       │───▶│   MongoDB       │
+��   (Frontend)    │    │   (Backend)     │    │   Atlas         │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                              │
+                              ▼
+                    ┌─────────────────┐
+                    │ Vietnamese      │
+                    │ BiEncoder       │
+                    │ (AI Model)      │
+                    └─────────────────┘
 ```
 
--   `main.py`: Chứa mã nguồn cho API server FastAPI.
--   `load_data.py`: Kịch bản để xử lý dữ liệu thô, tạo vector embeddings, và tải lên MongoDB Atlas.
--   `data/products_data`: Dữ liệu mẫu chứa các bài báo.
--   `.env`: File cấu hình chứa các biến môi trường (cần được tạo thủ công).
--   `requirements.txt`: Các thư viện Python cần thiết cho dự án.
+## 📋 Yêu cầu hệ thống
 
-## Yêu cầu
+- Python 3.8+
+- MongoDB Atlas account
+- 4GB RAM (để chạy mô hình AI)
+- Internet connection (để tải mô hình lần đầu)
 
--   Python 3.8+
--   Tài khoản [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register) (cluster M0 miễn phí là đủ).
--   `curl` hoặc `wget` để tải dữ liệu.
+## 🚀 Cài đặt và chạy
 
-## Hướng dẫn cài đặt và chạy dự án
-
-### 1. Clone và thiết lập Môi trường
+### 1. Clone repository và cài đặt dependencies
 
 ```bash
-# Clone repository (nếu có) hoặc tạo thư mục dự án
-git clone <your-repository-url>
+git clone <repository-url>
 cd products-finder-python
-
-# Tạo và kích hoạt môi trường ảo
-python -m venv venv
-source venv/bin/activate  # Trên Windows: venv\Scripts\activate
-
-# Cài đặt các thư viện cần thiết
 pip install -r requirements.txt
 ```
 
 ### 2. Cấu hình MongoDB Atlas
 
-1.  **Tạo một Cluster trên MongoDB Atlas:** Đảm bảo bạn có một cluster đang chạy (M0 là đủ).
-2.  **Tạo một người dùng Database:** Trong mục **Database Access**, tạo một người dùng với quyền đọc/ghi vào database của bạn (ví dụ: `readWriteAnyDatabase`). Ghi lại **username** và **password**.
-3.  **Cho phép truy cập từ IP của bạn:** Trong mục **Network Access**, thêm địa chỉ IP hiện tại của bạn vào danh sách cho phép.
-4.  **Lấy Hostname của Cluster:** Trong mục **Database**, nhấn vào nút **Connect** trên cluster của bạn, chọn **Drivers**, và sao chép phần hostname từ chuỗi kết nối (ví dụ: `cluster0.abcde.mongodb.net`).
+Tạo file `.env` trong thư mục gốc:
 
-### 3. Thiết lập biến Môi trường
-
-Tạo một file có tên `.env` trong thư mục gốc của dự án và điền thông tin bạn đã lấy từ Bước 2.
-
-**.env**
 ```env
-# Thay thế bằng thông tin người dùng database của bạn trên Atlas
-MONGO_USER=your_atlas_user
-MONGO_PASS=your_atlas_password
-
-# Thay thế bằng hostname của cluster của bạn
-MONGO_HOST=your_cluster_hostname.mongodb.net
-
-# Tên database và collection bạn muốn sử dụng
-MONGO_DB=myvectordb
-MONGO_COLLECTION=vectorized_data
+MONGO_USER=your_username
+MONGO_PASS=your_password
+MONGO_HOST=your_cluster.mongodb.net
+MONGO_DB=your_database_name
+MONGO_COLLECTION=your_collection_name
 ```
-### 4. Tạo foder data đưa file json vào và đặt tên như cấu trúc `data/products_data.json`
-```bash
-mkdir data
-```
-### 5. Chuẩn bị dữ liệu và Tải lên Atlas
 
-Chạy kịch bản `load_data.py` để tạo vector embeddings cho các bài báo và lưu chúng vào MongoDB Atlas.
+### 3. Chuẩn bị dữ liệu
 
 ```bash
+# Chạy script setup dữ liệu (Windows)
+setup_data.bat
+
+# Hoặc chạy thủ công
 python load_data.py
 ```
-Quá trình này có thể mất vài phút, tùy thuộc vào tốc độ mạng và máy tính của bạn, vì nó cần tải mô hình embedding lần đầu và xử lý dữ liệu.
 
-### 6. Tạo Vector Search Index
+### 4. Chạy ứng dụng
 
-Đây là bước quan trọng để kích hoạt tìm kiếm ngữ nghĩa. Bạn cần thực hiện trên giao diện web của MongoDB Atlas.
-
-1.  Đi đến cluster của bạn, chọn tab **Atlas Search**.
-2.  Nhấn **Create Search Index** và chọn **Atlas Vector Search** (JSON Editor).
-3.  Đặt tên Index là `vector_search`.
-4.  Chọn Database là `myvectordb` và Collection là `vectorized_data`.
-5.  Dán định nghĩa JSON sau:
-
-    ```json
-    {
-      "mappings": {
-        "dynamic": false,
-        "fields": {
-          "description_vector": {
-            "type": "knnVector",
-            "dimensions": 768,
-            "similarity": "cosine"
-          }
-        }
-      }
-    }
-    ```
-    > **Lưu ý:** `numDimensions` là **768** vì chúng ta sử dụng mô hình `bkai-foundation-models/vietnamese-bi-encoder`.
-
-6.  Tạo index và chờ cho đến khi trạng thái chuyển thành **Active**.
-
-### 7. Chạy API Server
-
-Bây giờ bạn đã sẵn sàng để khởi động dịch vụ API.
-
+#### Cách 1: Sử dụng script (Windows)
 ```bash
-uvicorn main:app --reload
-```
-Server sẽ chạy tại `http://localhost:8000`.
-
-### 8. Thử nghiệm API
-
-Mở một terminal khác và sử dụng `curl` để gửi yêu cầu đến API.
-
-```bash
-curl -X POST http://localhost:8000/search \
--H "Content-Type: application/json" \
--d '{"text": "your_queery"}'
+run_app.bat
 ```
 
-Bạn cũng có thể truy cập `http://localhost:8000/docs` trong trình duyệt để xem giao diện tài liệu API tương tác của FastAPI (Swagger UI).
+#### Cách 2: Chạy thủ công
 
-## Giao diện người dùng với Streamlit
-
-Dự án đã được tích hợp giao diện người dùng thân thiện bằng Streamlit để dễ dàng sử dụng mà không cần gọi API trực tiếp.
-
-### Chạy với Python
-
-#### 1. Chạy cả API và UI cùng lúc
-
-**Trên Windows:**
+**Terminal 1 - API Server:**
 ```bash
-.\run_app.bat
+python main.py
 ```
 
-**Trên Linux/Mac:**
+**Terminal 2 - Streamlit UI:**
 ```bash
-chmod +x run_app.sh
-./run_app.sh
-```
-
-#### 2. Hoặc chạy riêng từng service
-
-```bash
-# Terminal 1: Chạy API
-uvicorn main:app --reload
-
-# Terminal 2: Chạy Streamlit UI
 streamlit run streamlit_app.py
 ```
 
-### Truy cập ứng dụng
+### 5. Truy cập ứng dụng
 
-- **Streamlit UI:** http://localhost:8501 (Giao diện chính)
-- **FastAPI:** http://localhost:8000 (API Backend)
-- **API Docs:** http://localhost:8000/docs (Tài liệu API)
+- **Web UI**: http://localhost:8501
+- **API Documentation**: http://localhost:8001/docs
+- **API Base URL**: http://localhost:8001
 
-### Tính năng Streamlit UI
+## 📁 Cấu trúc project
 
-- ✅ **Giao diện thân thiện** - Dễ sử dụng cho người không kỹ thuật
-- ✅ **Tìm kiếm thông minh** - Nhập từ khóa và nhận kết quả ngay lập tức
-- ✅ **Hiển thị đa dạng** - Danh sách, bảng dữ liệu, và biểu đồ phân tích
-- ✅ **Lịch sử tìm kiếm** - Lưu và tái sử dụng các truy vấn trước
-- ✅ **Ví dụ tìm kiếm** - Gợi ý từ khóa phổ biến
-- ✅ **Kiểm tra kết nối** - Theo dõi trạng thái API
-- ✅ **Xuất dữ liệu** - Tải kết quả dưới dạng CSV
-- ✅ **Responsive design** - Tương thích mọi thiết bị
+```
+products-finder-python/
+├── data/
+│   └── products_data.json          # Dữ liệu sản phẩm
+├── main.py                         # FastAPI server chính
+├── streamlit_app.py               # Giao diện web Streamlit
+├── text_chunker.py                # Module xử lý text chunking
+├── load_data.py                   # Script tải dữ liệu lên MongoDB
+├── requirements.txt               # Dependencies Python
+├── setup_data.bat                 # Script setup dữ liệu (Windows)
+├── run_app.bat                    # Script chạy app (Windows)
+├── .env                          # Cấu hình môi trường (tạo thủ công)
+└── README.md                     # File này
+```
+
+## 🔧 API Endpoints
+
+### POST `/search`
+Tìm kiếm sản phẩm với text chunking
+
+**Request Body:**
+```json
+{
+  "text": "sữa rửa mặt cho da dầu",
+  "limit": 5,
+  "chunk_limit": 20
+}
+```
+
+**Response:**
+```json
+[
+  {
+    "product_id": "123",
+    "name": "Sữa rửa mặt Cetaphil",
+    "brand": "Cetaphil",
+    "price": 250000,
+    "score": 0.85,
+    "descriptioninfo": "Sữa rửa mặt dành cho da dầu...",
+    "total_chunks_found": 3,
+    "relevant_chunks": ["chunk1", "chunk2", "chunk3"]
+  }
+]
+```
+
+### GET `/info`
+Lấy thông tin về dữ liệu chunked
+
+### POST `/search-chunks`
+Tìm kiếm trực tiếp chunks (dành cho debug)
+
+## 🧩 Text Chunking
+
+### Cách hoạt động
+1. **Chia nhỏ văn bản**: Mô tả dài được chia thành các đoạn 300 ký tự
+2. **Overlap**: Các đoạn có phần chồng lấp 50 ký tự để đảm bảo ngữ cảnh
+3. **Vector hóa**: Mỗi chunk được chuyển thành vector riêng biệt
+4. **Tìm kiếm**: Tìm kiếm trên tất cả chunks
+5. **Gộp kết quả**: Gộp các chunks cùng sản phẩm thành kết quả cuối
+
+### Lợi ích
+- ✅ Tìm kiếm chính xác hơn trong mô tả dài
+- ✅ Tăng tốc độ xử lý
+- ✅ Giảm nhiễu từ thông tin không liên quan
+- ✅ Hiển thị đoạn văn bản liên quan nhất
+
+## 🎯 Cách sử dụng
+
+### 1. Giao diện web (Streamlit)
+1. Mở http://localhost:8501
+2. Nhập từ khóa tìm kiếm
+3. Xem kết quả với thông tin chunks
+4. Click vào link để xem chi tiết sản phẩm
+
+### 2. API (FastAPI)
+```python
+import requests
+
+response = requests.post(
+    "http://localhost:8001/search",
+    json={
+        "text": "kem chống nắng SPF 50",
+        "limit": 5,
+        "chunk_limit": 20
+    }
+)
+
+results = response.json()
+```
+
+### 3. Ví dụ tìm kiếm
+- "sữa rửa mặt cho da dầu"
+- "kem chống nắng SPF 50"
+- "serum vitamin C chống lão hóa"
+- "mặt nạ dưỡng ẩm ban đêm"
+- "toner cho da nhạy cảm"
+
+## 📊 Monitoring và Debug
+
+### Kiểm tra trạng thái
+- **API Health**: GET http://localhost:8001/docs
+- **Chunking Info**: GET http://localhost:8001/info
+- **Debug Chunks**: POST http://localhost:8001/search-chunks
+
+### Logs và Metrics
+- Thời gian tìm kiếm
+- Số chunks tìm thấy
+- Điểm tương đồng
+- Thống kê chunks per product
+
+## 🛠️ Troubleshooting
+
+### Lỗi thường gặp
+
+**1. Không kết nối được MongoDB**
+```
+Solution: Kiểm tra file .env và thông tin kết nối
+```
+
+**2. Model không tải được**
+```
+Solution: Đảm bảo có internet để tải model lần đầu
+```
+
+**3. API không phản hồi**
+```
+Solution: Kiểm tra port 8001 có bị chiếm không
+```
+
+**4. Streamlit không hiển thị**
+```
+Solution: Kiểm tra port 8501 và chạy lại streamlit
+```
+
+### Performance Tuning
+
+**Tăng tốc độ:**
+- Giảm `chunk_limit` trong request
+- Tăng `numCandidates` trong vector search
+- Sử dụng SSD cho MongoDB
+
+**Tăng độ chính xác:**
+- Giảm `chunk_size` trong TextChunker
+- Tăng `overlap` giữa các chunks
+- Fine-tune model cho domain cụ thể
+
+## 🔄 Cập nhật dữ liệu
+
+### Thêm sản phẩm mới
+1. Cập nhật file `data/products_data.json`
+2. Chạy lại `python load_data.py`
+3. Restart API server
+
+### Thay đổi chunking strategy
+1. Sửa parameters trong `text_chunker.py`
+2. Chạy lại script load data
+3. Restart services
+
+## 🤝 Đóng góp
+
+1. Fork repository
+2. Tạo feature branch
+3. Commit changes
+4. Push to branch
+5. Tạo Pull Request
+
+## 📝 License
+
+MIT License - xem file LICENSE để biết thêm chi tiết.
+
+## 📞 Hỗ trợ
+
+- 📧 Email: support@example.com
+- 🐛 Issues: GitHub Issues
+- 📖 Docs: API Documentation tại /docs
+
+## 🎉 Changelog
+
+### v2.0.0 (Current)
+- ✨ Thêm Text Chunking
+- 🚀 Cải thiện độ chính xác tìm kiếm
+- 📊 Thêm analytics và metrics
+- 🎨 Cải thiện UI/UX
+
+### v1.0.0
+- 🎯 Vector search cơ bản
+- 🌐 FastAPI + Streamlit
+- 📱 Responsive UI
+
+---
+
+**Được phát triển với ❤️ bằng Python, FastAPI, Streamlit và MongoDB Atlas**
