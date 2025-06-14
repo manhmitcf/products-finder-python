@@ -180,7 +180,7 @@ def process_products_with_chunking(products: List[Dict[str, Any]],
         if chunks:
             # Create embeddings for each chunk
             chunk_texts = [chunk['chunk_text'] for chunk in chunks]
-            embeddings = model.encode(chunk_texts, batch_size=128)
+            embeddings = model.encode(chunk_texts)
             # Add embeddings to chunks
             for chunk, embedding in zip(chunks, embeddings):
                 chunk['description_vector'] = embedding.tolist()

@@ -29,12 +29,9 @@ try:
 except Exception as e:
     print(f"Failed to connect to MongoDB: {e}")
     exit()
-# Setup device
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-print(f"Using device: {device}")
 # 3. Tải mô hình embedding (sẽ được cache sau lần chạy đầu)
 print("Loading sentence-transformer model...")
-model = SentenceTransformer("bkai-foundation-models/vietnamese-bi-encoder", device=device)
+model = SentenceTransformer("bkai-foundation-models/vietnamese-bi-encoder")
 print("Model loaded.")
 
 # 4. Khởi tạo ứng dụng FastAPI
@@ -66,7 +63,7 @@ async def search_products(request: SearchRequest):
 
     try:
         # a. Vector hóa câu truy vấn từ client
-        query_vector = model.encode(request.text, batch_size=128).tolist()
+        query_vector = model.encode(request.text).tolist()
 
         # b. Xây dựng aggregation pipeline cho Vector Search với chunks
         pipeline = [

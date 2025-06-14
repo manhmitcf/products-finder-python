@@ -4,7 +4,6 @@ from pymongo import MongoClient
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
 from text_chunker import process_products_with_chunking
-import torch
 def load_and_process_data():
     """
     Load product data, create chunks, generate embeddings, and store in MongoDB
@@ -30,12 +29,9 @@ def load_and_process_data():
     except Exception as e:
         print(f"Failed to connect to MongoDB: {e}")
         return
-    # Setup device
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    print(f"Using device: {device}")
     # Load the sentence transformer model
     print("Loading sentence-transformer model...")
-    model = SentenceTransformer("bkai-foundation-models/vietnamese-bi-encoder", device=device)
+    model = SentenceTransformer("bkai-foundation-models/vietnamese-bi-encoder")
     print("Model loaded successfully.")
     
     # Load product data
